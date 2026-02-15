@@ -28,12 +28,12 @@ class CounterNotificationService(
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
         )
         val notification = NotificationCompat.Builder(context, COUNTER_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_baseline_baby_changing_station_24)
+            .setSmallIcon(R.drawable.baseline_baby_changing_station_24)
             .setContentTitle("Increment counter")
             .setContentText("The count is $counter")
             .setContentIntent(activityPendingIntent)
             .addAction(
-                R.drawable.ic_baseline_baby_changing_station_24,
+                R.drawable.baseline_baby_changing_station_24,
                 "Increment",
                 incrementIntent
             )
