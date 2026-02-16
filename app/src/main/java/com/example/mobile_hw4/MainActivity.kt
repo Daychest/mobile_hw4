@@ -159,14 +159,14 @@ class PermissionsViewModel(
 
     init {
         viewModelScope.launch {
-            state = controller.getPermissionState(Permission.RECORD_AUDIO)
+            state = controller.getPermissionState(Permission.REMOTE_NOTIFICATION)
         }
     }
 
     fun provideOrRequestRecordAudioPermission() {
         viewModelScope.launch {
             try {
-                controller.providePermission(Permission.RECORD_AUDIO)
+                controller.providePermission(Permission.REMOTE_NOTIFICATION)
                 state = PermissionState.Granted
             } catch(e: DeniedAlwaysException) {
                 state = PermissionState.DeniedAlways
