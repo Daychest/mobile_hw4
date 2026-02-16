@@ -41,7 +41,7 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val service = CounterNotificationService(applicationContext)
+        val service = NotificationDisplayer(applicationContext)
         setContent {
             Mobile_hw4Theme() {
                 Content(service)
@@ -51,7 +51,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Content(service: CounterNotificationService) {
+fun Content(service: NotificationDisplayer) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -108,7 +108,7 @@ fun PermissionThing(){
 }
 
 @Composable
-fun ProximitySensor(service: CounterNotificationService) {
+fun ProximitySensor(service: NotificationDisplayer) {
     val ctx = LocalContext.current
     val sensorManager: SensorManager = ctx.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     val proximitySensor: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY)

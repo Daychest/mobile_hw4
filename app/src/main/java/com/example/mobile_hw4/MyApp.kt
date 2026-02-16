@@ -16,7 +16,7 @@ class MyApp: Application() {
     private fun createNotificationChannel() {
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
-                CounterNotificationService.COUNTER_CHANNEL_ID,
+                NotificationDisplayer.COUNTER_CHANNEL_ID,
                 "Counter",
                 NotificationManager.IMPORTANCE_DEFAULT
             )
