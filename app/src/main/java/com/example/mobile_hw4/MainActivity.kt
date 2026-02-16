@@ -37,7 +37,7 @@ class MainActivity : ComponentActivity() {
         val service = CounterNotificationService(applicationContext)
         setContent {
             Mobile_hw4Theme() {
-                ProximitySensor()
+                ProximitySensor(service)
                 Box(modifier = Modifier.fillMaxSize()) {
                     Button(onClick = {
                         service.showNotification(Counter.value)
@@ -51,7 +51,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun ProximitySensor() {
+fun ProximitySensor(service: CounterNotificationService) {
     val ctx = LocalContext.current
     val sensorManager: SensorManager = ctx.getSystemService(Context.SENSOR_SERVICE) as SensorManager
     val proximitySensor: Sensor? = sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY)
@@ -65,6 +65,7 @@ fun ProximitySensor() {
             if (event.sensor.type == Sensor.TYPE_PROXIMITY) {
                 if (event.values[0] == 0f) {
                     sensorStatus.value = "Near"
+                    service.showNotification(50)
                 } else {
                     sensorStatus.value = "Away"
                 }
