@@ -127,12 +127,7 @@ fun ProximitySensor(service: CounterNotificationService) {
 
         override fun onSensorChanged(event: SensorEvent) {
             if (event.sensor.type == Sensor.TYPE_PROXIMITY) {
-                if (event.values[0] == 0f) {
-                    sensorStatus.value = "Near"
-                    service.showNotification(50)
-                } else {
-                    sensorStatus.value = "Away"
-                }
+                sensorStatus.value = "Distance: " + event.values[0].toString() + "cm"
             }
         }
     }
@@ -144,7 +139,7 @@ fun ProximitySensor(service: CounterNotificationService) {
     Column() {
         Text(
             text = sensorStatus.value,
-            fontSize = 40.sp, modifier = Modifier.padding(5.dp)
+            fontSize = 30.sp, modifier = Modifier.padding(5.dp)
         )
     }
 }
