@@ -68,7 +68,7 @@ fun Content(service: CounterNotificationService) {
     ) {
         ProximitySensor(service)
         Button(onClick = {
-            service.showNotification(Counter.value)
+            service.showNotification("You clicked the button")
         }) {
             Text(text = "Show notification")
         }
@@ -122,12 +122,24 @@ fun ProximitySensor(service: CounterNotificationService) {
     val sensorStatus = remember {
         mutableStateOf("")
     }
+    var near = false
     val proximitySensorEventListener = object : SensorEventListener {
         override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {}
 
         override fun onSensorChanged(event: SensorEvent) {
             if (event.sensor.type == Sensor.TYPE_PROXIMITY) {
                 sensorStatus.value = "Distance: " + event.values[0].toString() + "cm"
+                if (event.values[0] < 2){
+                    if (!near) {
+                        near = true
+                        service.showNotification("You are near!")
+                    }
+                }else {
+                    if (near) {
+                        near = false
+                        service.showNotification("You are far!")
+                    }
+                }
             }
         }
     }
