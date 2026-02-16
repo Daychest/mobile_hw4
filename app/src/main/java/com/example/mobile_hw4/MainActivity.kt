@@ -51,57 +51,64 @@ class MainActivity : ComponentActivity() {
         val service = CounterNotificationService(applicationContext)
         setContent {
             Mobile_hw4Theme() {
-                ProximitySensor(service)
-                Box(modifier = Modifier.fillMaxSize()) {
-                    Button(onClick = {
-                        service.showNotification(Counter.value)
-                    }) {
-                        Text(text = "Show notification")
-                    }
+                Content(service)
+            }
+        }
+    }
+}
+
+@Composable
+fun Content(service: CounterNotificationService) {
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 50.dp)
+    ) {
+        ProximitySensor(service)
+        Button(onClick = {
+            service.showNotification(Counter.value)
+        }) {
+            Text(text = "Show notification")
+        }
+        PermissionThing()
+    }
+}
+
+@Composable
+fun PermissionThing(){
+    val factory = rememberPermissionsControllerFactory()
+    val controller = remember(factory) {
+        factory.createPermissionsController()
+    }
+
+    BindEffect(controller)
+
+    val viewModel = viewModel {
+        PermissionsViewModel(controller)
+    }
+
+    when (viewModel.state) {
+        PermissionState.Granted -> {
+            Text("Record audio permission granted!")
+        }
+
+        PermissionState.DeniedAlways -> {
+            Text("Permission was permanently declined.")
+            Button(onClick = {
+                controller.openAppSettings()
+            }) {
+                Text("Open app settings")
+            }
+        }
+        else -> {
+            Button(
+                onClick = {
+                    viewModel.provideOrRequestRecordAudioPermission()
                 }
-
-
-
-                val factory = rememberPermissionsControllerFactory()
-                val controller = remember(factory) {
-                    factory.createPermissionsController()
-                }
-
-                BindEffect(controller)
-
-                val viewModel = viewModel {
-                    PermissionsViewModel(controller)
-                }
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    when(viewModel.state) {
-                        PermissionState.Granted -> {
-                            Text("Record audio permission granted!")
-                        }
-                        PermissionState.DeniedAlways -> {
-                            Text("Permission was permanently declined.")
-                            Button(onClick = {
-                                controller.openAppSettings()
-                            }) {
-                                Text("Open app settings")
-                            }
-                        }
-                        else -> {
-                            Button(
-                                onClick = {
-                                    viewModel.provideOrRequestRecordAudioPermission()
-                                }
-                            ) {
-                                Text("Request permission")
-                            }
-                        }
-                    }
-                }
+            ) {
+                Text("Request permission")
             }
         }
     }
@@ -134,15 +141,7 @@ fun ProximitySensor(service: CounterNotificationService) {
         proximitySensorEventListener, proximitySensor, SensorManager.SENSOR_DELAY_NORMAL
     )
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .fillMaxHeight()
-            .fillMaxWidth()
-            .padding(5.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
+    Column() {
         Text(
             text = sensorStatus.value,
             fontSize = 40.sp, modifier = Modifier.padding(5.dp)
@@ -152,7 +151,7 @@ fun ProximitySensor(service: CounterNotificationService) {
 
 class PermissionsViewModel(
     private val controller: PermissionsController
-): ViewModel() {
+) : ViewModel() {
 
     var state by mutableStateOf(PermissionState.NotDetermined)
         private set
@@ -168,11 +167,11 @@ class PermissionsViewModel(
             try {
                 controller.providePermission(Permission.REMOTE_NOTIFICATION)
                 state = PermissionState.Granted
-            } catch(e: DeniedAlwaysException) {
+            } catch (e: DeniedAlwaysException) {
                 state = PermissionState.DeniedAlways
-            } catch(e: DeniedException) {
+            } catch (e: DeniedException) {
                 state = PermissionState.Denied
-            } catch(e: RequestCanceledException) {
+            } catch (e: RequestCanceledException) {
                 e.printStackTrace()
             }
         }
